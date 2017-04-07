@@ -14,7 +14,6 @@ name: string
 type: integer (0 = standard, 1 = toxic, 2 = perishable, 3 = luxury )
 quantity: integer
 expire_at: date
-added_at: date
 location: Storage
 
 ### Storage
@@ -25,9 +24,10 @@ is_toxic: boolean
 product: Product
 storage: Storage
 quantity: integer
+added_at: date
 
 ### DeliveryOrder
-order_date: date
+order_at: date
 status: string
 customer: Customer
 
@@ -35,6 +35,11 @@ customer: Customer
 delivery_order: DeliveryOrder
 product: Product
 quantity: integer
+
+
+Use Cases
+---------
+
 
 
 
