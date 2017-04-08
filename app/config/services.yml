@@ -4,6 +4,12 @@ parameters:
     #parameter_name: value
 
 services:
+    app.repository.customer:
+        class: AppBundle\Repository\CustomerRepository
+    warehouse.customer.register_customer:
+        class: Warehouse\Customer\RegisterCustomerHandle
+        arguments:
+          - '@doctrine'
     #service_name:
     #    class: AppBundle\Directory\ClassName
     #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']

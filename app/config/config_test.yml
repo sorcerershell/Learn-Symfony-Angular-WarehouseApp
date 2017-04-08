@@ -14,3 +14,10 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine:
+    dbal:
+        host:     127.0.0.1
+        dbname:   warehouseapp_test
+        user:     root
+        password: mysql
