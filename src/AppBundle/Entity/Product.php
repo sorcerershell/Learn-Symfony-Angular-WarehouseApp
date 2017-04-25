@@ -3,21 +3,33 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * Product
  *
  * @ORM\Table(name="product")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
+ * @ExclusionPolicy("all")
  */
 class Product
 {
+    const GENERAL = "general";
+    const FOOD  = "food";
+    const PERISHABLE = "perishable";
+    const TOXIC = "toxic";
+
     /**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Expose
      */
     private $id;
 
@@ -25,35 +37,24 @@ class Product
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Expose
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="type", type="integer", nullable=true)
+     * @var string
+     * @ORM\Column(name="type", type="string", nullable=true)
+     * @Expose
+     * @Assert\NotBlank()
      */
     private $type;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="quantity", type="integer")
-     */
-    private $quantity;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="expire_at", type="date", nullable=true)
-     */
-    private $expireAt;
 
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Inventory", mappedBy="product")
+     * @ORM\OneToMany(targetEntity="Inventory", mappedBy="product", orphanRemoval=true)
      */
     private $inventories;
 
@@ -101,7 +102,7 @@ class Product
     /**
      * Set type
      *
-     * @param integer $type
+     * @param string $type
      * @return Product
      */
     public function setType($type)
@@ -114,7 +115,7 @@ class Product
     /**
      * Get type
      *
-     * @return integer 
+     * @return string
      */
     public function getType()
     {
@@ -122,39 +123,17 @@ class Product
     }
 
     /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     * @return Product
+     * Product Types
+     * @return array
      */
-    public function setQuantity($quantity)
+    public static function getTypes()
     {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
-     * @return integer 
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * Set expireAt
-     *
-     * @param \DateTime $expireAt
-     * @return Product
-     */
-    public function setExpireAt($expireAt)
-    {
-        $this->expireAt = $expireAt;
-
-        return $this;
+        return [
+            self::GENERAL       => "General Goods",
+            self::FOOD          => "Foods",
+            self::PERISHABLE    => "Perishable Goods",
+            self::TOXIC         => "Toxic Goods",
+        ];
     }
 
     /**
@@ -175,6 +154,12 @@ class Product
         return $this->inventories;
     }
 
+    public function removeInventories()
+    {
+        unset($this->inventories);
+    }
+
+
     /**
      * @param ArrayCollection $inventories
      */
@@ -183,6 +168,34 @@ class Product
         $this->inventories = $inventories;
     }
 
+    public function isToxic()
+    {
+        if($this->getType() == self::TOXIC) return true;
 
+        return false;
+    }
 
+    public function isFood()
+    {
+        if($this->getType() == self::FOOD) return true;
+
+        return false;
+    }
+
+    public function isPerishable()
+    {
+        if($this->getType() == self::PERISHABLE) return true;
+
+        return false;
+    }
+
+    public function getInStock()
+    {
+        $sum = 0;
+        foreach($this->getInventories() as $i) {
+            $sum = $sum + $i->getQuantity();
+        }
+
+        return $sum;
+    }
 }

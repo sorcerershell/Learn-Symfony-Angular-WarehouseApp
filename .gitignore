@@ -10,3 +10,8 @@
 /vendor/
 /bin/
 /composer.phar
+/web/app/bower_components/
+/node_modules/
+.idea/misc.xml
+.idea/watcherTasks.xml
+.idea/dictionaries/gusprie.xml
