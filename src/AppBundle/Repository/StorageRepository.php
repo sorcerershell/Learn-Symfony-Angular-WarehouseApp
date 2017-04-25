@@ -12,4 +12,93 @@ use Doctrine\ORM\EntityRepository;
  */
 class StorageRepository extends EntityRepository
 {
+    public function getTotalStorage()
+    {
+        return (int) $this->createQueryBuilder('s')
+            ->select('count(s.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getFirstStorage()
+    {
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.storageOrder', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
+    }
+
+
+    public function getLastStorage()
+    {
+        $query = $this->createQueryBuilder('s')
+            ->orderBy('s.storageOrder', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query ->getSingleResult();
+    }
+
+    public function getNearbyToxicStorage() {
+        $storage_ids = [];
+
+        $firstStorage = $this->getFirstStorage();
+        $lastStorage = $this->getFirstStorage();
+        $toxicStorage = $this->getToxicStorage();
+
+
+        $storage_ids[] = $toxicStorage->getId();
+
+        $leftSideStorage = $toxicStorage->getId() - 1;
+        $rightSideStorage = $toxicStorage->getId() + 1;
+
+        if($leftSideStorage >= $firstStorage->getStorageOrder()) {
+            $storage_ids[] = $leftSideStorage;
+        }
+
+        if($rightSideStorage <= $lastStorage->getStorageOrder()) {
+            $storage_ids[] = $rightSideStorage;
+        }
+
+        $nearByStorages = $this->findBy(['id' => $storage_ids],['isToxic' => 'desc']);
+
+        return $nearByStorages;
+    }
+
+
+
+    public function getToxicStorage() {
+        return $this->findOneBy(['isToxic' => true]);
+    }
+
+    public function getLeastUtilizedStorage() {
+        $query = $this->createQueryBuilder('s')
+            ->orderBy('s.registeredStocks', 'asc')
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query->getSingleResult();
+    }
+
+    public function getStorageForFood() {
+        $query = $this->createQueryBuilder('s');
+
+        $forbidden = $this->getNearbyToxicStorage();
+
+        $i = 1;
+
+        $query->where('1=1');
+        foreach($forbidden as $f) {
+            $query->andWhere('s != ?'.$i)
+                ->setParameter($i, $f);
+            $i = $i + 1;
+        }
+
+        return $query->orderBy('s.registeredStocks', 'asc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
+
+    }
 }

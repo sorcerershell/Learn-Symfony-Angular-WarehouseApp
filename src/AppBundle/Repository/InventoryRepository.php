@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,4 +13,19 @@ use Doctrine\ORM\EntityRepository;
  */
 class InventoryRepository extends EntityRepository
 {
+    /**
+     * @param Product $product
+     * @return array
+     */
+    public function getProductInventories(Product $product)
+    {
+        $query = $this->createQueryBuilder('i')
+            ->where('i.product = ?1')
+            ->setParameter(1, $product)
+            ->orderBy('i.addedAt', 'ASC')
+            ->getQuery();
+        var_dump($query->getSQL());
+            $query->getResult();
+    }
+
 }

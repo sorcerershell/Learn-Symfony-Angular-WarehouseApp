@@ -9,6 +9,7 @@
 >
     <php>
         <ini name="error_reporting" value="-1" />
+        <env name="TEST_BASE_URL" value="http://localhost:8000/" />
         <!--
             <server name="KERNEL_DIR" value="/path/to/your/app/" />
         -->
@@ -19,6 +20,7 @@
             <directory>../src/*/*Bundle/Tests</directory>
             <directory>../src/*/Bundle/*Bundle/Tests</directory>
             <directory>../src/*Bundle/Tests</directory>
+            <directory>../src/Warehouse/Tests</directory>
         </testsuite>
     </testsuites>
 

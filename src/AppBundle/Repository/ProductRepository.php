@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,4 +13,34 @@ use Doctrine\ORM\EntityRepository;
  */
 class ProductRepository extends EntityRepository
 {
+    public function getProductById($id)
+    {
+        $query = $this->createQueryBuilder('e')
+            ->select('e')
+            ->where('e.id = ?1')
+            ->setParameter(1, $id)
+            ->getQuery();
+
+        return $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+    }
+
+    public function getProducts() {
+        return $this->createQueryBuilder('e')
+            ->select('e')
+            ->getQuery()
+            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+    }
+
+    public function getInStock($product_id) {
+        return (int)$this->createQueryBuilder('e')
+            ->select('SUM(i.quantity) as inStock')
+            ->from('AppBundle\Entity\Inventory', 'i')
+            ->where('e.id = :id')
+            ->setParameter('id', $product_id)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult()['inStock'];
+    }
+
 }

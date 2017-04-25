@@ -64,3 +64,18 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+nelmio_cors:
+    defaults:
+        allow_credentials: false
+        allow_origin: ['*']
+        allow_headers: ['X-Custom-Auth']
+        allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+        max_age: 3600
+        hosts: []
+        origin_regex: false
+fos_rest:
+    param_fetcher_listener: true
+    body_listener: true
+    format_listener: false
+    routing_loader:
+        default_format: json

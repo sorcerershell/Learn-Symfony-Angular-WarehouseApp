@@ -3,12 +3,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Storage
  *
  * @ORM\Table(name="storage")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\StorageRepository")
+ * @UniqueEntity(fields={"name"},message="This storage name is already been used")
  */
 class Storage
 {
@@ -25,6 +29,7 @@ class Storage
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -34,6 +39,20 @@ class Storage
      * @ORM\Column(name="is_toxic", type="boolean")
      */
     private $isToxic;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="registered_stocks", type="float")
+     */
+    private $registeredStocks;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="storage_order", type="integer")
+     */
+    private $storageOrder;
 
     /**
      * @var ArrayCollection
@@ -108,6 +127,17 @@ class Storage
     }
 
     /**
+     * Is Toxic?
+     *
+     * @return boolean
+     */
+    public function isToxic()
+    {
+        return $this->isToxic;
+    }
+
+
+    /**
      * @return ArrayCollection
      */
     public function getInventories()
@@ -122,6 +152,42 @@ class Storage
     {
         $this->inventories = $inventories;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getRegisteredStocks()
+    {
+        return $this->registeredStocks;
+    }
+
+    /**
+     * @param mixed $registeredStocks
+     */
+    public function setRegisteredStocks($registeredStocks)
+    {
+        $this->registeredStocks = $registeredStocks;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStorageOrder()
+    {
+        return $this->storageOrder;
+    }
+
+    /**
+     * @param int $storageOrder
+     */
+    public function setStorageOrder($storageOrder)
+    {
+        $this->storageOrder = $storageOrder;
+    }
+
+
+
+
 
 
 }
