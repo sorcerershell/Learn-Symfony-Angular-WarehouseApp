@@ -1,0 +1,85 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default" ng-if="products.showListing == true">
+            <div class="panel-heading">
+                <h3>Products</h3>
+                <button class="btn btn-primary" ng-click="products.newForm()">New Product</button>
+            </div>
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>In Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="product in products.productsList">
+
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.type }}</td>
+                        <td>{{ product.in_stock }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a class="btn btn-default" ng-click="products.showStockInForm(product.id)">stock in</a>
+                                <a class="btn btn-default" ng-click="products.showStockOutForm(product.id)">stock out</a>
+                                <a class="btn btn-default" ng-click="products.editProduct(product.id)">edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <button class="btn btn-primary" ng-click="products.newForm()">New Product</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 editForm" ng-if="products.showForm == true">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>{{ products.formTitle }}</h3>
+            </div>
+            <div class="panel-body">
+                <form name="productForm" class="form" ng-submit="products.saveProduct()" novalidate>
+                    <div class="form-group">
+                        <label class="control-label">Name </label>
+                        <input type="text" name="product_name" ng-model="products.product.name" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Type </label>
+                        <select name="product_type" ng-model="products.product.type" class="form-control">
+                            <option ng-repeat="productType in products.productTypes" value="{{ productType.key }}">{{ productType.value  }}</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="product_id" ng-model="products.product.id" />
+                    <a class="action" class="btn btn-link" style="cursor:pointer;" ng-click="products.hideForm()">Close</a>
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 stockInForm" ng-if="products.stockInForm == true">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>Stock In {{ products.product.name }}</h3>
+            </div>
+            <div class="panel-body">
+                <form name="productForm" class="form" ng-submit="products.saveProduct()" novalidate>
+                    <div class="form-group">
+                        <label class="control-label">Quantity </label>
+                        <input type="text" name="stock_qty" ng-model="products.stocks.qty" class="form-control"/>
+                    </div>
+                    <input type="hidden" name="stock_product_id" ng-model="products.product.id" />
+                    <a class="action" class="btn btn-link" style="cursor:pointer;" ng-click="products.hideStockInForm()">Close</a>
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

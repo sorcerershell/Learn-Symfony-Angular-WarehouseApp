@@ -8,16 +8,24 @@
 
 namespace Warehouse\Customer;
 
+use Symfony\Component\Validator\Constraints as Assert;
 
+
+/**
+ * Class RegisterCustomerCommand
+ * @package Warehouse\Customer
+ */
 class RegisterCustomerCommand
 {
     /**
      * @var string
+     * @Assert\NotBlank()
      */
     protected $name;
 
     /**
      * @var string
+     * @Assert\Email()
      */
     protected $email;
 

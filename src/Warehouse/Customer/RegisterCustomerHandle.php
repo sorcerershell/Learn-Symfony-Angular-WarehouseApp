@@ -23,16 +23,11 @@ class RegisterCustomerHandle
         $this->em = $registry->getManager();
     }
 
-    public function handle(RegisterCustomerCommand $command)
+    public function handle(Customer $customer)
     {
-        $customer = new Customer();
-
-        $customer->setName($command->getName());
-        $customer->setEmail($command->getEmail());
-        $customer->setAddress($command->getAddress());
-
         $this->em->persist($customer);
         $this->em->flush();
 
+        return $customer->getId();
     }
 }

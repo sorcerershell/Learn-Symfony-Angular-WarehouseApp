@@ -36,6 +36,13 @@ class Inventory
     private $addedAt;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="expired_at", type="datetime")
+     */
+    private $expiredAt;
+
+    /**
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Product",inversedBy="inventories")
@@ -139,5 +146,22 @@ class Inventory
     {
         $this->storage = $storage;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getExpiredAt()
+    {
+        return $this->expiredAt;
+    }
+
+    /**
+     * @param \DateTime $expiredAt
+     */
+    public function setExpiredAt($expiredAt)
+    {
+        $this->expiredAt = $expiredAt;
+    }
+
 
 }

@@ -1,0 +1,63 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">Customers</div>
+			<div class="panel-body">
+				<table class="table table-condensed">
+					<thead>
+					<tr>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Address</th>
+						<th>Actions</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="customer in customer.customersList">
+							<td>{{ customer.name }}</td>
+							<td>{{ customer.email }}</td>
+							<td>{{ customer.address }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a class="btn btn-default" ng-click="customer.edit(customer.id)">edit</a>
+                                    <a class="btn btn-default" ng-click="customer.remove(customer.id)">remove</a>
+                                </div>
+                            </td>
+						</tr>
+					<tbody>
+				</table>
+			</div>
+            <div class="panel-footer">
+                <button class="btn btn-primary" ng-click="customer.newCustomer()">New Customer</button>
+            </div>
+		</div>
+	</div>
+    <div class="col-md-12 editForm" ng-if="customer.showForm == true">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>{{ customer.formTitle }} <span class="small"><a class="action" ng-click="customer.hideForm()">Close</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <form name="customerForm" class="form" ng-submit="customer.saveCustomer()" novalidate>
+                    <div class="form-group">
+                        <label class="control-label">Name </label>
+                        <input type="text" name="customer_name" ng-model="customer.name" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">E-mail </label>
+                        <input type="text" name="customer_email" ng-model="customer.email" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <textarea name="customer_address" ng-model="customer.address" class="form-control" rows="5" cols="30">
+
+                        </textarea>
+                    </div>
+                    <input type="hidden" name="customer_id" ng-model="customer.id" value="" />
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

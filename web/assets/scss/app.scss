@@ -1,0 +1,37 @@
+@import url(http://fonts.googleapis.com/css?family=Cabin);
+@import "bootstrap";
+@import "font-awesome";
+
+$defaultFontSize: 14px;
+$defaultFontFamily: "Cabin", arial, sans-serif;
+
+body {
+	font-size: $defaultFontSize;
+	font-family: $defaultFontFamily;
+}
+
+
+// animation
+.editForm {
+	&.ng-enter {
+		-webkit-transition: 0.5s linear all;
+		-o-transition: 0.5s linear all;
+		-moz-transition: 0.5s linear all;
+		opacity: 0;
+
+		&.active {
+			opacity: 1;
+		}
+	}
+
+	&.ng-leave {
+		-webkit-transition: 0.5s linear all;
+		-o-transition: 0.5s linear all;
+		-moz-transition: 0.5s linear all;
+		opacity: 0;
+	}
+}
+
+a.action {
+	cursor: hand;
+}

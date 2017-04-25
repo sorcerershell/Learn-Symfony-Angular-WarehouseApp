@@ -14,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Warehouse\Customer\RegisterCustomerCommand;
 
 class CustomerController extends Controller
 {
@@ -29,7 +28,37 @@ class CustomerController extends Controller
     {
         $customers = $this->getDoctrine()->getRepository('AppBundle:Customer')->findAll();
 
-        return new JsonResponse(['customers' => $customers], 200);
+        $rows = [];
+        foreach($customers as $customer) {
+            $rows[] = [
+                'id' => $customer->getId(),
+                'name' => $customer->getName(),
+                'email' => $customer->getEmail(),
+                'address' => $customer->getAddress(),
+            ];
+        }
+
+        $response = new JsonResponse(['customers' => $rows], 200);
+
+        return $response;
+    }
+
+    /**
+     * Get customer
+     * @return array
+     *
+     * @View()
+     * @Get("/api/v1/customer/{customerId}")
+     */
+    public function getCustomerAction($customerId)
+    {
+        $customer = $this->getDoctrine()->getRepository('AppBundle:Customer')->find($customerId);
+
+        if($customer) {
+            return new JsonResponse(['customer' => $customer], 200);
+        }
+
+        return new JsonResponse(['error' =>['Customer Not Found']], 404);
     }
 
     /**
@@ -37,34 +66,66 @@ class CustomerController extends Controller
      * @return array
      *
      * @View()
-     * @Post("/api/v1/customer")
+     * @Post("/api/v1/customers")
      */
     public function postCustomerAction(Request $request)
     {
         $customer = new Customer();
 
-        $form = $this->createForm('AppBundle\Form\CustomerType', $customer);
-        $form->handleRequest($request);
+        $data = json_decode($request->getContent());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($customer);
-            $em->flush($customer);
+        $customer->setName($data->customer->name);
+        $customer->setEmail($data->customer->email);
+        $customer->setAddress($data->customer->address);
+
+        $validator = $this->container->get('validator');
+
+        $errors = $validator->validate($customer);
+
+        if(count($errors) > 0) {
+            return new JsonResponse([
+                'success' => false,
+                'data' => [],
+                'errors' => (string)$errors,
+            ], 500);
+        }
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->persist($customer);
+        $em->flush();
+
+
+
+        return new JsonResponse([
+            'success' => true,
+            'data' => [ 'customerId' => $customer->getId() ],
+        ], 200);
+    }
+
+
+    /**
+     * Delete Customer
+     * @return array
+     *
+     * @Delete("/api/v1/customer/{customerId}")
+     */
+    public function deleteCustomerAction($customerId)
+    {
+        $customer = $this->getDoctrine()->getRepository('AppBundle:Customer')->find($customerId);
+
+        if($customer) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->remove($customer);
+            $em->flush();
 
             return new JsonResponse([
-               'success' => true,
-                'data' => [
-                    'customer_id' => $customer->getId(),
-                ]
+                'success' => true,
             ], 200);
         }
-        var_dump($form->getErrors());
 
         return new JsonResponse([
             'success' => false,
-            'data' => [],
-            'errors' => $form->getErrors(),
-        ], 503);
+        ], 404);
     }
 
 }
